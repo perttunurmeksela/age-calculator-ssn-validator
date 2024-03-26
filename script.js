@@ -1,12 +1,12 @@
-// Array of characters used for checksum calculation
-const checksumTable = '0123456789ABCDEFHJKLMNPRSTUVWXY'.split('');
+// Array of characters used for checkMark calculation
+const checkMarkTable = '0123456789ABCDEFHJKLMNPRSTUVWXY'.split('');
 
 // Regex pattern for validating Finnish social security numbers (SSN)
 const regex = /^(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])([5-9]\d\+|\d\d[-|U-Y]|[012]\d[A-F])\d{3}[\dA-Z]$/;
 
 // Constants for February, days in months, and century mappings
 const february = '02';
-const daysInMonthMap = new Map([
+const monthDaysMap = new Map([
   ['01', 31],
   ['02', 28],
   ['03', 31],
@@ -61,7 +61,7 @@ function isLeapYear(year) {
 
 // Function to get the number of days in a given month of a given year
 function daysInGivenMonth(year, month) {
-  const daysInMonth = daysInMonthMap.get(month);
+  const daysInMonth = monthDaysMap.get(month);
 
   if (month === february && isLeapYear(year)) {
     return daysInMonth + 1;
@@ -134,7 +134,7 @@ function calculateAge() {
   $('#ageOutput').html(`<div class="alert alert-success" role="alert">Ikä: ${years} vuotta, ${months} kuukautta, ${days} päivää</div>`);
 }
 
-// Function to validate SSN based on the regex and checksum calculation
+// Function to validate SSN based on the regex and checkMark calculation
 function isValidSSN(personalSSN) {
   if (!regex.test(personalSSN)) {
     return false;
@@ -145,16 +145,16 @@ function isValidSSN(personalSSN) {
   const centuryId = personalSSN.charAt(6);
   const year = parseInt(personalSSN.substring(4, 6), 10) + centuryMap.get(centuryId);
   const rollingId = personalSSN.substring(7, 10);
-  const checksum = personalSSN.substring(10, 11);
+  const checkMark = personalSSN.substring(10, 11);
   const daysInMonth = daysInGivenMonth(year, month);
 
   // Check if month and day are valid
-  if (!daysInMonthMap.get(month) || dayOfMonth > daysInMonth) {
+  if (!monthDaysMap.get(month) || dayOfMonth > daysInMonth) {
     return false;
   }
 
-  // Calculate checksum and compare with the last character of SSN
-  const checksumBase = parseInt(personalSSN.substring(0, 6) + rollingId, 10);
+  // Calculate checkMark and compare with the last character of SSN
+  const checkMarkBase = parseInt(personalSSN.substring(0, 6) + rollingId, 10);
 
-  return checksum === checksumTable[checksumBase % 31];
+  return checkMark === checkMarkTable[checkMarkBase % 31];
 }
